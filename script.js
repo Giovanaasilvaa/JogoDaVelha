@@ -2,10 +2,6 @@ const cells = document.querySelectorAll('.cell');
 const statusText = document.querySelector('.status');
 const resetButton = document.querySelector('.reset');
 
-
-const winSound = new Audio('styles.css/ganhou.mp3');
-const drawSound = new Audio('styles.css/perdeu.mp3');
-
 let currentPlayer = 'X';
 let gameState = ['', '', '', '', '', '', '', '', ''];
 let isGameActive = true;
@@ -21,13 +17,23 @@ const winningConditions = [
     [2, 4, 6]
 ];
 
+
+let winSound, drawSound;
+
+
+function loadSounds() {
+    winSound = new Audio('styles.css/ganhou.mp3');
+    drawSound = new Audio('styles.css/perdeu.mp3');
+}
+
+
 function checkWinner() {
     for (const condition of winningConditions) {
         const [a, b, c] = condition;
         if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
             statusText.textContent = `Jogador ${currentPlayer} venceu!`;
             isGameActive = false;
-            winSound.play();
+            if (winSound) winSound.play();  
             return;
         }
     }
@@ -35,13 +41,19 @@ function checkWinner() {
     if (!gameState.includes('')) {
         statusText.textContent = 'Empate!';
         isGameActive = false;
-        drawSound.play();
+        if (drawSound) drawSound.play();  
     }
 }
+
 
 function handleCellClick(event) {
     const cell = event.target;
     const index = cell.getAttribute('data-index');
+
+
+    if (!winSound || !drawSound) {
+        loadSounds();
+    }
 
     if (gameState[index] !== '' || !isGameActive) return;
 
